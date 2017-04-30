@@ -199,3 +199,5 @@ is used as the JSON version.
 1. Be careful when you use versioning "in context" but don't have unified versioning on POJO models. The version
 in context cannot be changed during the same serializing or deserializing call. **You are better off just have
 an unified version number for all POJOs if you plan to use versioning "in context".**
+1. There should be **only one *String* or *Version* attribute annotated with @JsonVersionProperty**. If multiple
+attributes have @JsonVersionProperty annotation, only one of them will be used. Which one to be used is not quaranteed.
