@@ -1,3 +1,27 @@
+/*******************************************************************************
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2017 Pengyu Chen
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ ******************************************************************************/
+
 package io.pengyuc.jackson.versioning;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -70,8 +94,8 @@ public class TestDeserializingWithJsonVersionProperty {
     @Test
     public void whenJsonVersionPropertyIsNotSet_UseConfiguredVersion() throws IOException {
         ModelPojoWithVersionProperty pojo = mapper.reader()
+                .withAttribute(Version.JsonVersionConfigDeserializing, "0.6")
                 .forType(ModelPojoWithVersionProperty.class)
-                .with(ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfigDeserializing, "0.6"))
                 .readValue(JSON_VER_NOT_SPECIFIED_WITH_OLD_ATTR);
 
         Assert.assertEquals("0.6", pojo.getVersion());
@@ -102,8 +126,8 @@ public class TestDeserializingWithJsonVersionProperty {
     @Test (expected = JsonMappingException.class)
     public void whenJsonVersionPropertyIsNotSetAndConfiguredVersionUsed_FailDeprecatedAttributes() throws IOException {
         mapper.reader()
+                .withAttribute(Version.JsonVersionConfigDeserializing, "0.9")
                 .forType(ModelPojoWithVersionProperty.class)
-                .with(ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfigDeserializing, "0.9"))
                 .readValue(JSON_VER_NOT_SPECIFIED_WITH_OLD_ATTR);
     }
 
