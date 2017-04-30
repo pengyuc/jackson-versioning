@@ -26,7 +26,7 @@ public class TestVersionedAsProperty {
     @BeforeClass
     static public void setupClass() {
         mapper = new ObjectMapper().registerModule(new JsonVersioningModule());
-        ctxVersion1 = ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfig, "1.0");
+        ctxVersion1 = ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfigSerializing, "1.0");
     }
 
     @Parameters

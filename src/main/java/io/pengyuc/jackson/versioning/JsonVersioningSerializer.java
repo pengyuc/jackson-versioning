@@ -62,7 +62,7 @@ public class JsonVersioningSerializer extends BeanSerializer implements Resolvab
             jsonVersionObj = jsonVersionProperty.getAccessor().getValue(bean);
         }
         if (jsonVersionObj == null) {
-            jsonVersionObj = provider.getAttribute(Version.JsonVersionConfig);
+            jsonVersionObj = provider.getAttribute(Version.JsonVersionConfigSerializing);
             // There is a version property and it was not set. We should output the version at this property
             if (jsonVersionProperty != null)
                 forceOutputVersion = true;

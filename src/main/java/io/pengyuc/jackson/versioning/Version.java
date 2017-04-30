@@ -14,7 +14,8 @@ import java.util.List;
  * Version class that can be compared. Can take multiple version numbers as sub-versions.
  */
 public class Version implements Comparable<Version> {
-    public static final String JsonVersionConfig = "io.pengyuc.jackson.versioning.json_version";
+    public static final String JsonVersionConfigDeserializing = "io.pengyuc.jackson.versioning.json_version_deserializing";
+    public static final String JsonVersionConfigSerializing = "io.pengyuc.jackson.versioning.json_version_serializing";
 
     private List<Integer> versionNumbers;
 

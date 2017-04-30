@@ -33,7 +33,7 @@ public class TestJsonSerializationVersioningWithSimpleAnnotations {
     }
 
     private ContextAttributes makeVersionAttr(String versionStr) {
-        return ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfig, versionStr);
+        return ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfigSerializing, versionStr);
     }
 
     @Test(expected = JsonGenerationException.class)
