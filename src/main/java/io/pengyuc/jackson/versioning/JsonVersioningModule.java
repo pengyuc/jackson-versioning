@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.deser.BeanDeserializer;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.BeanSerializerBase;
 import io.pengyuc.jackson.versioning.annotations.JsonVersioned;
@@ -20,8 +22,8 @@ public class JsonVersioningModule extends SimpleModule {
             @Override
             public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
                 JsonVersioned jsonVersioned = beanDesc.getClassAnnotations().get(JsonVersioned.class);
-                if (jsonVersioned != null) {
-                    return new JsonVersioningDeserializer(jsonVersioned, config, beanDesc, deserializer);
+                if (jsonVersioned != null && BeanDeserializer.class.isInstance(deserializer)) {
+                    return new JsonVersioningDeserializer(jsonVersioned, config, beanDesc, (BeanDeserializer) deserializer);
                 }
                 return super.modifyDeserializer(config, beanDesc, deserializer);
             }
@@ -31,7 +33,7 @@ public class JsonVersioningModule extends SimpleModule {
             @Override
             public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc, JsonSerializer<?> serializer) {
                 JsonVersioned jsonVersioned = beanDesc.getClassAnnotations().get(JsonVersioned.class);
-                if (jsonVersioned != null && BeanSerializerBase.class.isInstance(serializer)) {
+                if (jsonVersioned != null && BeanSerializer.class.isInstance(serializer)) {
                     return new JsonVersioningSerializer(jsonVersioned, beanDesc, (BeanSerializerBase) serializer);
                 }
                 return super.modifySerializer(config, beanDesc, serializer);

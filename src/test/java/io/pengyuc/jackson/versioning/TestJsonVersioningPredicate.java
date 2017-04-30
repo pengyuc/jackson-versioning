@@ -1,6 +1,8 @@
 package io.pengyuc.jackson.versioning;
 
+import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
+import com.google.common.base.Predicate;
 import io.pengyuc.jackson.versioning.annotations.JsonSince;
 import io.pengyuc.jackson.versioning.annotations.JsonUntil;
 import org.junit.Assert;
@@ -11,10 +13,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestJsonVersioningPredicate {
-    static JsonVersioningPredicate predicate;
+    static Predicate<BeanProperty> predicate;
     @BeforeClass
     static public void setupClass() {
-        predicate = new JsonVersioningPredicate(Version.fromString("1.0"));
+        predicate = JsonVersioningPredicate.forPropertyInVersion(Version.fromString("1.0"));
     }
 
     private PropertyWriter mockVersioning(String since, String until) {

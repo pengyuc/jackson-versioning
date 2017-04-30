@@ -35,7 +35,8 @@ public class JsonVersioningSerializer extends BeanSerializer implements Resolvab
 
         BeanPropertyDefinition versionProperty = null;
         for (BeanPropertyDefinition propertyDef: beanDesc.findProperties()) {
-            if (propertyDef.getAccessor().hasAnnotation(JsonVersionProperty.class)) {
+            if ((propertyDef.hasGetter() && propertyDef.getGetter().hasAnnotation(JsonVersionProperty.class))
+                    || (propertyDef.hasField() && propertyDef.getField().hasAnnotation(JsonVersionProperty.class))) {
                 // Only support one attribute with JsonVersionProperty annotation
                 versionProperty = propertyDef;
                 break;
@@ -57,22 +58,16 @@ public class JsonVersioningSerializer extends BeanSerializer implements Resolvab
     protected void serializeFieldsWithVersioning(Object bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
         Version jsonVersion;
         Object jsonVersionObj = null;
-        boolean forceOutputVersion = false;
+
         if (jsonVersionProperty != null) {
             jsonVersionObj = jsonVersionProperty.getAccessor().getValue(bean);
         }
         if (jsonVersionObj == null) {
             jsonVersionObj = provider.getAttribute(Version.JsonVersionConfigSerializing);
-            // There is a version property and it was not set. We should output the version at this property
-            if (jsonVersionProperty != null)
-                forceOutputVersion = true;
         }
 
         if (jsonVersionObj == null) {
             jsonVersion = modelVersion;
-            // There is a version property and it was not set. We should output the version at this property
-            if (jsonVersionProperty != null)
-                forceOutputVersion = true;
         } else if (jsonVersionObj instanceof Version) {
             jsonVersion = (Version) jsonVersionObj;
         } else {
@@ -86,9 +81,11 @@ public class JsonVersioningSerializer extends BeanSerializer implements Resolvab
 
         final Collection<BeanPropertyWriter> properties;
         if (_filteredProps != null && provider.getActiveView() != null) {
-            properties = Collections2.filter(Arrays.asList(_filteredProps), new JsonVersioningPredicate(jsonVersion));
+            properties = Collections2.filter(Arrays.asList(_filteredProps),
+                    JsonVersioningPredicate.forPropertyInVersion(jsonVersion));
         } else {
-            properties = Collections2.filter(Arrays.asList(_props), new JsonVersioningPredicate(jsonVersion));
+            properties = Collections2.filter(Arrays.asList(_props),
+                    JsonVersioningPredicate.forPropertyInVersion(jsonVersion));
         }
 
         final PropertyFilter filter = _propertyFilterId == null ? null : findPropertyFilter(provider, _propertyFilterId, bean);
@@ -96,7 +93,7 @@ public class JsonVersioningSerializer extends BeanSerializer implements Resolvab
             if (property == null)
                 continue;
 
-            if (forceOutputVersion && property.getAnnotation(JsonVersionProperty.class) != null) {
+            if (jsonVersionProperty != null && property.getAnnotation(JsonVersionProperty.class) != null) {
                 gen.writeFieldName(property.getSerializedName());
                 gen.writeString(jsonVersion.toString());
                 continue;

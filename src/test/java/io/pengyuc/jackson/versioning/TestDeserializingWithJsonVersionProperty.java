@@ -1,8 +1,8 @@
 package io.pengyuc.jackson.versioning;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import io.pengyuc.jackson.versioning.models.ModelPojoWithVersionProperty;
 import org.junit.Assert;
 import org.junit.Test;
@@ -81,24 +81,25 @@ public class TestDeserializingWithJsonVersionProperty {
     }
 
     @Test
-    public void whenJsonVersionPropertyIsNotSetAndNoVersionConfigured_UseModeVersion() throws IOException {
+    public void whenJsonVersionPropertyIsNotSetAndNoVersionConfigured_UseModelVersion() throws IOException {
         ModelPojoWithVersionProperty pojo = mapper.reader()
                 .forType(ModelPojoWithVersionProperty.class)
                 .readValue(JSON_VER_NOT_SPECIFIED);
 
         Assert.assertEquals("1.0", pojo.getVersion());
-        Assert.assertEquals("something09", pojo.getDeprecatedAt09());
+        Assert.assertNull(pojo.getDeprecatedAt08());
+        Assert.assertNull(pojo.getDeprecatedAt09());
         Assert.assertEquals("alwaysThere", pojo.getAlwaysThereAttribute());
     }
 
-    @Test (expected = UnrecognizedPropertyException.class)
-    public void whenJsonVersionPropertyIsNotSetAndNoVersionConfigured_UseModeVersion_AndFailDeprecatedAttributes() throws IOException {
+    @Test (expected = JsonMappingException.class)
+    public void whenJsonVersionPropertyIsNotSetAndNoVersionConfigured_UseModelVersion_AndFailDeprecatedAttributes() throws IOException {
         mapper.reader()
                 .forType(ModelPojoWithVersionProperty.class)
                 .readValue(JSON_VER_NOT_SPECIFIED_WITH_OLD_ATTR);
     }
 
-    @Test (expected = UnrecognizedPropertyException.class)
+    @Test (expected = JsonMappingException.class)
     public void whenJsonVersionPropertyIsNotSetAndConfiguredVersionUsed_FailDeprecatedAttributes() throws IOException {
         mapper.reader()
                 .forType(ModelPojoWithVersionProperty.class)
@@ -106,7 +107,7 @@ public class TestDeserializingWithJsonVersionProperty {
                 .readValue(JSON_VER_NOT_SPECIFIED_WITH_OLD_ATTR);
     }
 
-    @Test (expected = UnrecognizedPropertyException.class)
+    @Test (expected = JsonMappingException.class)
     public void whenJsonVersionPropertyIsSet_FailDeprecatedAttributes() throws IOException {
         mapper.reader()
                 .forType(ModelPojoWithVersionProperty.class)
