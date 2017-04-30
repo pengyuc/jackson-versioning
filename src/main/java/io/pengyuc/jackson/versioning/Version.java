@@ -1,5 +1,7 @@
 package io.pengyuc.jackson.versioning;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -12,10 +14,11 @@ import java.util.List;
  * Version class that can be compared. Can take multiple version numbers as sub-versions.
  */
 public class Version implements Comparable<Version> {
-    public static final String JsonVersionProperty = "io.pengyuc.jackson.versioning.json_version";
+    public static final String JsonVersionConfig = "io.pengyuc.jackson.versioning.json_version";
 
     private List<Integer> versionNumbers;
 
+    @JsonCreator
     public static Version fromString(String versionStr) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(versionStr));
         Preconditions.checkArgument(!versionStr.startsWith("."), "Version string must not start with dot: {}", versionStr);
@@ -64,6 +67,7 @@ public class Version implements Comparable<Version> {
         return 0;
     }
 
+    @JsonValue
     public String toString() {
         return Joiner.on(".").join(versionNumbers);
     }

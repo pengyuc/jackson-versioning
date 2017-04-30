@@ -5,7 +5,6 @@ import io.pengyuc.jackson.versioning.annotations.JsonUntil;
 import io.pengyuc.jackson.versioning.annotations.JsonVersioned;
 
 @JsonVersioned("1.0")
-
 public class VersionedCar {
     private Integer capacity = 5;
     private String model = "Rav4";

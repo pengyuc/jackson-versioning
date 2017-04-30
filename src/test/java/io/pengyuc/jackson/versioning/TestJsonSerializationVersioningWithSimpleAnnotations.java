@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
-import io.pengyuc.jackson.versioning.models.UnversionedCar;
 import io.pengyuc.jackson.versioning.models.VersionedCar;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,28 +24,16 @@ public class TestJsonSerializationVersioningWithSimpleAnnotations {
 
 
     private static ObjectMapper mapper;
-    private static UnversionedCar unversionedCar;
     private static VersionedCar versionedCar;
 
     @BeforeClass
     static public void setupClass() {
         mapper = new ObjectMapper().registerModule(new JsonVersioningModule());
-        unversionedCar = new UnversionedCar(CAPACITY_VALUE, MODEL_VALUE, MAKE_VALUE);
         versionedCar = new VersionedCar(CAPACITY_VALUE, MODEL_VALUE, MAKE_VALUE, INSURED_VALUE);
     }
 
-
-    @Test
-    public void serializeRegularObject_StillGetCorrectResult() throws JsonProcessingException {
-        String s = mapper.writer().writeValueAsString(unversionedCar);
-
-        assertThatJson(s).node(CAPACITY_ATTR).isEqualTo(CAPACITY_VALUE);
-        assertThatJson(s).node(MODEL_ATTR).isEqualTo(MODEL_VALUE);
-        assertThatJson(s).node(MAKE_ATTR).isEqualTo(MAKE_VALUE);
-    }
-
     private ContextAttributes makeVersionAttr(String versionStr) {
-        return ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionProperty, versionStr);
+        return ContextAttributes.getEmpty().withPerCallAttribute(Version.JsonVersionConfig, versionStr);
     }
 
     @Test(expected = JsonGenerationException.class)
@@ -117,5 +104,6 @@ public class TestJsonSerializationVersioningWithSimpleAnnotations {
         assertThatJson(s).node(OMIITED_INBETWEEN_ATTR).isPresent();
 
     }
+
 
 }

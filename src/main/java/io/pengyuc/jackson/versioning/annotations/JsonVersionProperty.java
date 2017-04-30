@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotate the property that has the version of the model.
- * The annotated field can be of integer, string, or {@link Version} type.
+ * The annotated field can be of string, or {@link Version} type.
  * This is used when the version should be included in the JSON content.
  * However, it is not required for the model class to be versioned.
  */
