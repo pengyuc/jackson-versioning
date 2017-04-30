@@ -24,25 +24,24 @@
 
 package io.pengyuc.jackson.versioning.annotations;
 
-
-import io.pengyuc.jackson.versioning.Version;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
- * Annotate the property that has the version of the model.
- * The annotated field can be of string, or {@link Version} type.
- * This is used when the version should be included in the JSON content.
- * However, it is not required for the model class to be versioned.
+ * A converter method that convert the model between versions. This annotation can be used with {@link JsonSince} and
+ * {@link JsonUntil} to limit the invocation versions of the JSON.
+ * The converter method shall manipulate the JsonNode object in this order:
+ * Deserializing:
+ * Input String -> JsonNode -> other versioning annotations; ex: {@link JsonSince} and/or {@link JsonUntil}
+ *              -> converter -> versioned JsonNode -> Jackson deserialize into a model instance.
+ * Serializing:
+ * Model instance -> Jackson deserialize into JsonNode -> other versioning annotations
+ *              -> converter -> Jackson serialize into string
+ *
+ * If there are multiple converter, the order of their execution is not guaranteed.
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface JsonVersionProperty {
+public @interface JsonVersionConverter {
 }
